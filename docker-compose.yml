@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:14-alpine
+    env_file:
+      - ./.envs/.postgres
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  django:
+    container_name: django_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/src:rw
+    ports:
+      - 8080:8080
+    env_file:
+      - ./.envs/.django
+      - ./.envs/.postgres
+    depends_on:
+      - postgres
